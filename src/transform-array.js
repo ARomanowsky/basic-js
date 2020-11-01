@@ -1,20 +1,38 @@
 module.exports = function transform(arr) {
-  if (!Array.isArray(arr)) throw Error
-  let subArr = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === '--discard-next') {
-      subArr.push(arr[i+1]);
-      subArr.pop();
-      i+=2;
-    } else if (arr[i] === '--discard-prev' ) {
-      subArr.pop();
-    } else if (arr[i] === '--double-next') {
-      subArr.push(arr[i+1]);
-    } else if (arr[i] === '--double-prev') {
-      subArr.push(arr[i-1]);
-    } else {
-      subArr.push(arr[i]);
+    if(typeof(arr) !== 'object') {
+        throw new Error();
     }
-  }
-  return subArr.filter((i) => i !== undefined)
+
+    if(!Array.isArray(arr)) {
+        throw new Error();
+    }
+
+    if(!arr.length) {
+        return arr;
+    }
+
+    const res = [];
+    for(let i = 0; i < arr.length; ++i) {
+        if(arr[i] === '--double-next') {
+            if(i < arr.length - 1) {
+                res.push(arr[i + 1]);
+            }
+        } else if(arr[i] === '--double-prev') {
+            if(i > 0) {
+                res.push(arr[i - 1]);
+            }
+        } else if(arr[i] === '--discard-next') {
+            if(i < arr.length - 1) {
+                i++;
+            }
+        } else if(arr[i] === '--discard-prev') {
+            if(res.length > 0) {
+                res.pop();
+            }
+        } else {
+            res.push(arr[i]);
+        }
+    }
+
+    return res;
 };
